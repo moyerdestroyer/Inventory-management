@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.Add_Product_Controller">
+   <children>
+      <FlowPane layoutX="14.0" layoutY="14.0" prefHeight="570.0" prefWidth="874.0" style="-fx-border-color: black;">
+         <children>
+            <VBox prefHeight="564.0" prefWidth="386.0">
+               <children>
+                  <Label text="Add Product" />
+                  <Separator prefWidth="200.0" />
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="10.0" prefWidth="75.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="375.0" minWidth="10.0" prefWidth="311.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="ID" />
+                        <Label text="Inv" GridPane.rowIndex="2" />
+                        <Label text="Price" GridPane.rowIndex="3" />
+                        <Label text="Max" GridPane.rowIndex="4" />
+                        <Label text="Min" GridPane.rowIndex="5" />
+                        <TextField fx:id="Id_text" disable="true" editable="false" promptText="Autogen - Disabled" GridPane.columnIndex="1" />
+                        <TextField fx:id="Name_text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="Inv_text" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="Price_text" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="Max_text" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextField fx:id="Min_text" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="Name" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+            <VBox alignment="TOP_RIGHT" prefHeight="564.0" prefWidth="484.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <children>
+                  <TextField fx:id="Search_text" maxWidth="200.0" promptText="Search by Part ID or Name">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TextField>
+                  <TableView prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                        <TableColumn fx:id="Id_column" prefWidth="75.0" text="Part ID" />
+                        <TableColumn fx:id="Name_column" prefWidth="108.0" text="Part Name" />
+                      <TableColumn fx:id="Inventory_column" prefWidth="157.0" text="Inventory Level" />
+                      <TableColumn fx:id="Cost_column" prefWidth="123.0" text="Cost Per Unit" />
+                    </columns>
+                  </TableView>
+                  <Button fx:id="Add_button" mnemonicParsing="false" text="Add">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <TableView prefHeight="200.0" prefWidth="200.0">
+                     <columns>
+                        <TableColumn fx:id="Id_column_bottom" prefWidth="75.0" text="Part ID" />
+                        <TableColumn fx:id="Name_column_bottom" prefWidth="108.0" text="Part Name" />
+                        <TableColumn fx:id="Inventory_column_bottom" prefWidth="157.0" text="Inventory Level" />
+                        <TableColumn fx:id="Cost_column_bottom" prefWidth="123.0" text="Cost Per Unit" />
+                     </columns>
+                  </TableView>
+                  <Button fx:id="Remove_association_button" mnemonicParsing="false" onAction="#RemoveButtonAction" text="Remove Associated Part">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Pane prefHeight="56.0" prefWidth="464.0">
+                     <children>
+                        <Button fx:id="Save_button" layoutX="277.0" layoutY="10.0" mnemonicParsing="false" onAction="#SaveButtonAction" text="Save" />
+                        <Button fx:id="Cancel_button" layoutX="387.0" layoutY="10.0" mnemonicParsing="false" onAction="#CancelButtonAction" text="Cancel" />
+                     </children>
+                  </Pane>
+               </children>
+            </VBox>
+         </children>
+      </FlowPane>
+   </children>
+</Pane>
