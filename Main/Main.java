@@ -17,9 +17,9 @@ public class Main extends Application {
 
         //Add test data function?
         mainInventory.addPart(new InhousePart(1,"test", 34.02, 3,2,5,5));
-        mainInventory.addPart(new InhousePart(2, "second test", 24.24, 5, 4, 10, 22));
+        mainInventory.addPart(new InhousePart(2, "second test", 24.24, 5, 3, 10, 22));
         mainInventory.addProduct(new Product(1, "First Product", 8.39, 2, 0, 10));
-        mainInventory.addProduct(new Product(2, "Second Thing", 22.2, 60, 2, 3));
+        mainInventory.addProduct(new Product(2, "Second Thing", 22.2, 60, 2, 100));
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
         Parent root = (Parent) loader.load();

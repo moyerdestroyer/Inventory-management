@@ -1,8 +1,6 @@
 package Controllers;
 
-import Model.Inventory;
-import Model.Part;
-import Model.Product;
+import Model.*;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
@@ -12,12 +10,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -111,10 +107,14 @@ public class Main_form_controller implements Initializable {
 
     @FXML
     void PartModifyAction(ActionEvent event) throws IOException {
-        Parent modifyPartParent = FXMLLoader.load(getClass().getResource("/Views/modify_part_form.fxml"));
-        Scene modifyPartScene = new Scene(modifyPartParent);
-        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
-        window.setScene((modifyPartScene));
+        int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/modify_part_form.fxml"));
+        Stage modifyPartStage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        Scene modifyPartScene = new Scene((Parent) loader.load());
+        Modify_Part_Controller controller = loader.getController();
+
+        controller.add_data(inv, selectedRow);
+        modifyPartStage.setScene(modifyPartScene);
     }
 
     @FXML
