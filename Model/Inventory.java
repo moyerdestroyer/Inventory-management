@@ -46,7 +46,8 @@ public class Inventory {
     }
 
     public void updatePart(int index, Part selectedPart) {
-        //Fix This
+        allParts.set(index, selectedPart);
+        System.out.println("Part updated");
     }
 
     public void updateProduct(int index, Product newProduct) {

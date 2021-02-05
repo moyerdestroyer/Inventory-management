@@ -81,8 +81,19 @@ public class Modify_Part_Controller {
     private Button Cancel_button;
 
     @FXML
-    void SaveButtonAction (ActionEvent event) {
-
+    void SaveButtonAction (ActionEvent event) throws IOException {
+        if (verifyData()) {
+            if (Inhouse_radio.isSelected()) {
+                InhousePart partToUpdate = new InhousePart((inv.getAllParts().get(selectedRow).getId()), Name_Text.getText(), Double.parseDouble(Price_text.getText()), Integer.parseInt(Inv_text.getText()), Integer.parseInt(Min_text.getText()), Integer.parseInt(Max_text.getText()), Integer.parseInt(Machine_text.getText()));
+                inv.updatePart(selectedRow, partToUpdate);
+            }
+            else if (Outsourced_radio.isSelected()) {
+                OutsourcedPart partToUpdate = new OutsourcedPart((inv.getAllParts().get(selectedRow).getId()), Name_Text.getText(), Double.parseDouble(Price_text.getText()), Integer.parseInt(Inv_text.getText()), Integer.parseInt(Min_text.getText()), Integer.parseInt(Max_text.getText()), Machine_text.getText());
+                inv.updatePart(selectedRow, partToUpdate);
+            }
+            System.out.println("Part Successfully Modified");
+            CancelButtonAction(event);
+        }
     }
 
     @FXML
@@ -105,4 +116,88 @@ public class Modify_Part_Controller {
         Machine_label.setText("Machine Id:");
     }
 
+    //Verify Data function
+    boolean verifyData() {
+        //Temp storage of data
+        String name;
+        double price;
+        int stock;
+        int min;
+        int max;
+        int machineId;
+        String companyName;
+
+        //Try the name
+        try {
+            name = Name_Text.getText();
+        } catch (Exception e){
+            errorMessage("Please enter a real name");
+            return false;
+        }
+        //Store the price
+        try {
+            price = Double.parseDouble(Price_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please enter a valid price");
+            return false;
+        }
+        //Store the stock
+        try {
+            stock = Integer.parseInt(Inv_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please enter a valid inventory count");
+            return false;
+        }
+        //Store the min
+        try {
+            min = Integer.parseInt(Min_text.getText());
+        } catch (Exception e) {
+            errorMessage("Enter a valid minimum value");
+            return false;
+        }
+        //Store the max
+        try {
+            max = Integer.parseInt(Max_text.getText());
+        } catch (Exception e) {
+            errorMessage("Enter a valid Maximum value");
+            return false;
+        }
+
+        //check if in-house or outsourced, then store the data
+        if (Inhouse_radio.isSelected()) {
+        try {
+            machineId = Integer.parseInt(Machine_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please Enter a valid integer for the machine ID");
+            return false;
+        }
+        }
+        else if (Outsourced_radio.isSelected()) {
+        try {
+            companyName = Machine_text.getText();
+        } catch (Exception e) {
+            errorMessage("Please enter a valid Company Name");
+            return false;
+        }
+        }
+        //Check if all ints are positive
+        if (stock < 0 | min < 0 | max < 0) {
+            errorMessage("Please enter positive values for the stock, min and max");
+            return false;
+        }
+        if (min <= stock && stock <= max) {
+            return true;
+        } else {
+            errorMessage("Min, Max, and Stock values are impossible");
+        return false;
+        }
+    }
+
+    void errorMessage(String error) {
+        //Display error messages in Console and with an Alert
+        System.out.println(error);
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setContentText(error);
+        a.show();
+    }
 }

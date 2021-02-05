@@ -74,19 +74,20 @@ public class Add_Part_Controller {
         int numberOfParts = inv.getAllParts().size();
 
         if (verifyData()) {
-            if (inHouseRadio.isSelected()){
+            if (inHouseRadio.isSelected()) {
                 inv.addPart(new InhousePart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), Integer.parseInt(MachineText.getText())));
             }
-            if (OutsourcedRadio.isSelected()){
+            if (OutsourcedRadio.isSelected()) {
                 inv.addPart(new OutsourcedPart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), MachineText.getText()));
             }
+            System.out.println("New Part Added Successfully");
             CancelButtonAction(event);
         }
-        System.out.println("New Part Added Successfully");
     }
 
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
+        //Pass the Inventory, and go to main screen
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
         Stage addPartStage = (Stage)((Node) event.getSource()).getScene().getWindow();
         Scene mainScene = new Scene((Parent) loader.load());
@@ -171,7 +172,11 @@ public class Add_Part_Controller {
         }
     }
     void errorMessage(String error) {
+        //Display error messages in Console and with an Alert
         System.out.println(error);
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setContentText(error);
+        a.show();
     }
 
 }

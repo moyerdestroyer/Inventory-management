@@ -25,7 +25,9 @@ public class Main_form_controller implements Initializable {
     public void add_data(Inventory inv) {
         this.inv = inv;
         Part_table.setItems(inv.getAllParts());
+        Part_table.getSelectionModel().selectFirst();
         Product_table.setItems(inv.getAllProducts());
+        Product_table.getSelectionModel().selectFirst();
     }
 
     @FXML
