@@ -73,13 +73,16 @@ public class Add_Part_Controller {
     void SaveButtonAction(ActionEvent event) throws IOException {
         int numberOfParts = inv.getAllParts().size();
 
-        if (inHouseRadio.isSelected()){
-            inv.addPart(new InhousePart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), Integer.parseInt(MachineText.getText())));
+        if (verifyData()) {
+            if (inHouseRadio.isSelected()){
+                inv.addPart(new InhousePart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), Integer.parseInt(MachineText.getText())));
+            }
+            if (OutsourcedRadio.isSelected()){
+                inv.addPart(new OutsourcedPart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), MachineText.getText()));
+            }
+            CancelButtonAction(event);
         }
-        if (OutsourcedRadio.isSelected()){
-            inv.addPart(new OutsourcedPart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), MachineText.getText()));
-        }
-        CancelButtonAction(event);
+        System.out.println("New Part Added Successfully");
     }
 
     @FXML
@@ -160,13 +163,15 @@ public class Add_Part_Controller {
             errorMessage("Please enter positive values for the stock, min and max");
             return false;
         }
-
-
-
-
+        if (min <= stock && stock <= max) {
+            return true;
+        } else {
+            errorMessage("Min, Max, and Stock values are impossible");
+            return false;
+        }
     }
     void errorMessage(String error) {
-
+        System.out.println(error);
     }
 
 }
