@@ -55,8 +55,8 @@ public class Inventory {
     }
 
     public boolean deletePart(Part selectedPart) {
-        //FIIIIIIX
-        return false;
+        allParts.remove(selectedPart);
+        return true;
     }
 
     public boolean deleteProduct(Product selectedProduct) {

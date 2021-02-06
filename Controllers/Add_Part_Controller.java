@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Add_Part_Controller {
     Inventory inv;
@@ -72,13 +74,25 @@ public class Add_Part_Controller {
     @FXML
     void SaveButtonAction(ActionEvent event) throws IOException {
         int numberOfParts = inv.getAllParts().size();
+        //Find what ID to assign, Make an integer list of all known IDs, then assign one to idToAssign
+        List<Integer> list = new ArrayList<>();
+        int idToAssign = 1;
+
+        //Populate int list
+        for (int i = 0; i < numberOfParts; i++) {
+            list.add(inv.getAllParts().get(i).getId());
+        }
+        //Go through the numbers, and see if the Integer List contains that number
+        while (list.contains(idToAssign)) {
+            idToAssign++;
+        }
 
         if (verifyData()) {
             if (inHouseRadio.isSelected()) {
-                inv.addPart(new InhousePart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), Integer.parseInt(MachineText.getText())));
+                inv.addPart(new InhousePart(idToAssign, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), Integer.parseInt(MachineText.getText())));
             }
             if (OutsourcedRadio.isSelected()) {
-                inv.addPart(new OutsourcedPart(numberOfParts + 1, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), MachineText.getText()));
+                inv.addPart(new OutsourcedPart(idToAssign, NameText.getText(), Double.parseDouble(PriceText.getText()), Integer.parseInt(InvText.getText()), Integer.parseInt(MinText.getText()), Integer.parseInt(MaxText.getText()), MachineText.getText()));
             }
             System.out.println("New Part Added Successfully");
             CancelButtonAction(event);

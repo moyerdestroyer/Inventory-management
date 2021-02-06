@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 
@@ -104,6 +105,19 @@ public class Main_form_controller implements Initializable {
 
     @FXML
     void PartDeleteAction(ActionEvent event) {
+        int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setTitle("Delete Part");
+        a.setContentText("Are you sure you want to delete: " + inv.getAllParts().get(selectedRow).getName());
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK)  {
+            boolean delete = inv.deletePart(inv.getAllParts().get(selectedRow));
+            if (delete) {
+                System.out.println("Part Deleted");
+            }
+        } else if (result.get() == ButtonType.CANCEL) {
+            System.out.println("Delete Cancelled");
+        }
 
     }
 
