@@ -26,8 +26,14 @@ public class Inventory {
     }
 
     public Part lookupPart(int partId) {
-        //Fix This
-        return allParts.get(0);
+        //will return product at index 0 by default
+        int indexOfMatch = 0;
+        for (int i = 0; i < allParts.size(); i++) {
+            if (allParts.get(i).getId() == partId) {
+                indexOfMatch = i;
+            }
+        }
+        return allParts.get(indexOfMatch);
     }
 
     public Part lookupPart(String partName) {
@@ -36,8 +42,14 @@ public class Inventory {
     }
 
     public Product lookupProduct(int productId) {
-        //FIX ME!!!!
-        return allProducts.get(0);
+        //will return product at index 0 by default
+        int indexOfMatch = 0;
+        for (int i = 0; i < allParts.size(); i++) {
+            if (allProducts.get(i).getId() == productId) {
+                indexOfMatch = i;
+            }
+        }
+        return allProducts.get(indexOfMatch);
     }
 
     public Product lookupProduct(String productName) {
@@ -51,17 +63,26 @@ public class Inventory {
     }
 
     public void updateProduct(int index, Product newProduct) {
-        //FIX ME!
+        allProducts.set(index, newProduct);
+        System.out.println("Product Updated");
     }
 
     public boolean deletePart(Part selectedPart) {
-        allParts.remove(selectedPart);
-        return true;
+        try {
+            allParts.remove(selectedPart);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean deleteProduct(Product selectedProduct) {
-        ///FFIIIIIIIZXXXZXZX
-        return false;
+        try {
+            allProducts.remove(selectedProduct);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public ObservableList<Part> getAllParts() {

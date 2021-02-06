@@ -2,6 +2,8 @@ package Controllers;
 
 import Model.*;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.application.Platform;
@@ -25,8 +27,40 @@ public class Main_form_controller implements Initializable {
 
     public void add_data(Inventory inv) {
         this.inv = inv;
-        Part_table.setItems(inv.getAllParts());
+
+        Part_id_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
+        Part_name_column.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
+        Part_stock_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
+        Part_price_column.setCellValueFactory(new PropertyValueFactory<Part, Double>("price"));
+
+        //Make a part filter list, and add a listener to search
+        FilteredList<Part> partFilteredData = new FilteredList<>(inv.getAllParts(), p -> true);
+        Part_search.textProperty().addListener((observable, oldValue, newValue) -> {
+            partFilteredData.setPredicate(Part -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                if (Part.getName().contains(newValue)) {
+                    return true;
+                } else if (String.valueOf(Part.getId()).contains(newValue)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<Part> partSortedList = new SortedList<>(partFilteredData);
+        partSortedList.comparatorProperty().bind(Part_table.comparatorProperty());
+        Part_table.setItems(partSortedList);
         Part_table.getSelectionModel().selectFirst();
+
+        Product_id_column.setCellValueFactory(new PropertyValueFactory<Product, Integer>("id"));
+        Product_name_column.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
+        Product_inventory_column.setCellValueFactory(new PropertyValueFactory<Product, Integer>("stock"));
+        Product_price_column.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
+
+        FilteredList<Product> productFilteredData = new FilteredList<>(inv.getAllProducts(), p -> true);
+        Product_search.textProperty().addListener((observable, oldValue, newValue));
+
         Product_table.setItems(inv.getAllProducts());
         Product_table.getSelectionModel().selectFirst();
     }
@@ -157,16 +191,8 @@ public class Main_form_controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Hello");
-        Part_id_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
-        Part_name_column.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
-        Part_stock_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
-        Part_price_column.setCellValueFactory(new PropertyValueFactory<Part, Double>("price"));
-
-        Product_id_column.setCellValueFactory(new PropertyValueFactory<Product, Integer>("id"));
-        Product_name_column.setCellValueFactory(new PropertyValueFactory<Product, String>("name"));
-        Product_inventory_column.setCellValueFactory(new PropertyValueFactory<Product, Integer>("stock"));
-        Product_price_column.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
+        System.out.println("Main Screen Initialized");
     }
+
 
 }
