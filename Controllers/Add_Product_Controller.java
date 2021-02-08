@@ -1,6 +1,8 @@
 package Controllers;
 
-import Model.Inventory;
+import Model.*;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -16,6 +19,32 @@ public class Add_Product_Controller {
     Inventory inv;
     public void add_data(Inventory inv) {
         this.inv = inv;
+
+        //Fill out top table
+        Id_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
+        Name_column.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
+        Inventory_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
+        Cost_column.setCellValueFactory(new PropertyValueFactory<Part, Double>("price"));
+        //Make a part filter list, and add a listener to search
+        FilteredList<Part> partFilteredData = new FilteredList<>(inv.getAllParts(), p -> true);
+        Search_text.textProperty().addListener((observable, oldValue, newValue) -> {
+            partFilteredData.setPredicate(Part -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                if (Part.getName().contains(newValue)) {
+                    return true;
+                } else if (String.valueOf(Part.getId()).contains(newValue)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<Part> partSortedList = new SortedList<>(partFilteredData);
+        partSortedList.comparatorProperty().bind(Part_table.comparatorProperty());
+        Part_table.setItems(partSortedList);
+        Part_table.getSelectionModel().selectFirst();
+
     }
 
 
@@ -41,19 +70,25 @@ public class Add_Product_Controller {
     private TextField Search_text;
 
     @FXML
-    private TableColumn<?, ?> Id_column;
+    private TableView<Part> Part_table;
 
     @FXML
-    private TableColumn<?, ?> Name_column;
+    private TableColumn<Part, Integer> Id_column;
 
     @FXML
-    private TableColumn<?, ?> Inventory_column;
+    private TableColumn<Part, String> Name_column;
 
     @FXML
-    private TableColumn<?, ?> Cost_column;
+    private TableColumn<Part, Integer> Inventory_column;
+
+    @FXML
+    private TableColumn<Part, Double> Cost_column;
 
     @FXML
     private Button Add_button;
+
+    @FXML
+    private TableView<Part> Part_table_bottom;
 
     @FXML
     private TableColumn<?, ?> Id_column_bottom;
@@ -93,7 +128,73 @@ public class Add_Product_Controller {
 
     @FXML
     void SaveButtonAction(ActionEvent event) {
-
+        if (verify_data()) {
+            //Save and quit
+        }
     }
 
+    boolean verify_data() {
+        //Temp storage of data
+        String name;
+        double price;
+        int stock;
+        int min;
+        int max;
+
+        //Try the name
+        try {
+            name = Name_text.getText();
+        } catch (Exception e){
+            errorMessage("Please enter a real name");
+            return false;
+        }
+        //Store the price
+        try {
+            price = Double.parseDouble(Price_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please enter a valid price");
+            return false;
+        }
+        //Store the stock
+        try {
+            stock = Integer.parseInt(Inv_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please enter a valid inventory count");
+            return false;
+        }
+        //Store the min
+        try {
+            min = Integer.parseInt(Min_text.getText());
+        } catch (Exception e) {
+            errorMessage("Enter a valid minimum value");
+            return false;
+        }
+        //Store the max
+        try {
+            max = Integer.parseInt(Max_text.getText());
+        } catch (Exception e) {
+            errorMessage("Enter a valid Maximum value");
+            return false;
+        }
+
+        //Check if all ints are positive
+        if (stock < 0 | min < 0 | max < 0) {
+            errorMessage("Please enter positive values for the stock, min and max");
+            return false;
+        }
+        if (min <= stock && stock <= max) {
+            return true;
+        } else {
+            errorMessage("Min, Max, and Stock values are impossible");
+            return false;
+        }
+    }
+
+    void errorMessage(String message) {
+        //Display error messages in Console and with an Alert
+        System.out.println(message);
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setContentText(message);
+        a.show();
+    }
 }

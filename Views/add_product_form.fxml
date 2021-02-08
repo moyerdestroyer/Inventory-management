@@ -65,7 +65,7 @@
                         <Insets />
                      </VBox.margin>
                   </TextField>
-                  <TableView prefHeight="200.0" prefWidth="200.0">
+                  <TableView prefHeight="200.0" prefWidth="200.0" fx:id="Part_table">
                     <columns>
                         <TableColumn fx:id="Id_column" prefWidth="75.0" text="Part ID" />
                         <TableColumn fx:id="Name_column" prefWidth="108.0" text="Part Name" />
@@ -78,7 +78,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </VBox.margin>
                   </Button>
-                  <TableView prefHeight="200.0" prefWidth="200.0">
+                  <TableView prefHeight="200.0" prefWidth="200.0" fx:id="Part_table_bottom">
                      <columns>
                         <TableColumn fx:id="Id_column_bottom" prefWidth="75.0" text="Part ID" />
                         <TableColumn fx:id="Name_column_bottom" prefWidth="108.0" text="Part Name" />

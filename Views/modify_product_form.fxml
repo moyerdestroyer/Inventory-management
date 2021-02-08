@@ -41,7 +41,7 @@
                         <Label text="Price" GridPane.rowIndex="3" />
                         <Label text="Max" GridPane.rowIndex="4" />
                         <Label text="Min" GridPane.rowIndex="5" />
-                        <TextField fx:id="Id_text" disable="true" editable="false" GridPane.columnIndex="1" />
+                        <TextField fx:id="Id_text" disable="true" editable="false" GridPane.columnIndex="1" promptText="Disabled" />
                         <TextField fx:id="Name_text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="Inv_text" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="Price_text" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -65,7 +65,7 @@
                         <Insets />
                      </VBox.margin>
                   </TextField>
-                  <TableView prefHeight="200.0" prefWidth="200.0">
+                  <TableView prefHeight="200.0" prefWidth="200.0" fx:id="Part_table">
                     <columns>
                         <TableColumn fx:id="ID_column" prefWidth="75.0" text="Part ID" />
                         <TableColumn fx:id="Name_column" prefWidth="108.0" text="Part Name" />

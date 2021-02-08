@@ -1,6 +1,9 @@
 package Controllers;
 
 import Model.Inventory;
+import Model.Part;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -8,13 +11,19 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Modify_Product_Controller {
     Inventory inv;
-    public void add_data(Inventory inv) {
+    int selectedRow;
+    public void add_data(Inventory inv, int selectedIndex) {
         this.inv = inv;
+        this.selectedRow = selectedIndex;
+
+
+
     }
 
     @FXML

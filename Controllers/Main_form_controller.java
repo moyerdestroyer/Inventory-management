@@ -59,9 +59,22 @@ public class Main_form_controller implements Initializable {
         Product_price_column.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
 
         FilteredList<Product> productFilteredData = new FilteredList<>(inv.getAllProducts(), p -> true);
-        Product_search.textProperty().addListener((observable, oldValue, newValue));
-
-        Product_table.setItems(inv.getAllProducts());
+        Product_search.textProperty().addListener((observable, oldValue, newValue) -> {
+            productFilteredData.setPredicate(Product -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                if (Product.getName().contains(newValue)) {
+                    return true;
+                } else if (String.valueOf(Product.getId()).contains(newValue)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<Product> productSortedList = new SortedList<>(productFilteredData);
+        productSortedList.comparatorProperty().bind(Product_table.comparatorProperty());
+        Product_table.setItems(productSortedList);
         Product_table.getSelectionModel().selectFirst();
     }
 
@@ -179,14 +192,30 @@ public class Main_form_controller implements Initializable {
 
     @FXML
     void ProductDeleteAction(ActionEvent event) {
+        int selectedRow = Product_table.getSelectionModel().getSelectedIndex();
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setTitle("Delete Product");
+        a.setContentText("Are you sure you want to delete: " + inv.getAllProducts().get(selectedRow).getName());
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK)  {
+            boolean delete = inv.deleteProduct(inv.getAllProducts().get(selectedRow));
+            if (delete) {
+                System.out.println("Part Deleted");
+            }
+        } else if (result.get() == ButtonType.CANCEL) {
+            System.out.println("Delete Cancelled");
+        }
     }
 
     @FXML
     void ProductModifyAction(ActionEvent event) throws IOException {
-        Parent modifyProductParent = FXMLLoader.load(getClass().getResource("/Views/modify_product_form.fxml"));
-        Scene modifyProductScene = new Scene(modifyProductParent);
-        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
-        window.setScene((modifyProductScene));
+        int selectedRow = Product_table.getSelectionModel().getSelectedIndex();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/modify_product_form.fxml"));
+        Stage modifyProductStage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        Scene modifyProductScene = new Scene((Parent) loader.load());
+        Modify_Product_Controller controller = loader.getController();
+        controller.add_data(inv, selectedRow);
+        modifyProductStage.setScene(modifyProductScene);
     }
 
     @Override
