@@ -200,7 +200,7 @@ public class Main_form_controller implements Initializable {
         if (result.get() == ButtonType.OK)  {
             boolean delete = inv.deleteProduct(inv.getAllProducts().get(selectedRow));
             if (delete) {
-                System.out.println("Part Deleted");
+                System.out.println("Product Deleted");
             }
         } else if (result.get() == ButtonType.CANCEL) {
             System.out.println("Delete Cancelled");

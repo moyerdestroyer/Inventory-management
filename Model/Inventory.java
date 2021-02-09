@@ -44,7 +44,7 @@ public class Inventory {
     public Product lookupProduct(int productId) {
         //will return product at index 0 by default
         int indexOfMatch = 0;
-        for (int i = 0; i < allParts.size(); i++) {
+        for (int i = 0; i < allProducts.size(); i++) {
             if (allProducts.get(i).getId() == productId) {
                 indexOfMatch = i;
             }

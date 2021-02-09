@@ -22,6 +22,7 @@ public class Main extends Application {
         mainInventory.addProduct(new Product(1, "First Product", 8.39, 2, 0, 10));
         mainInventory.addProduct(new Product(2, "Second Thing", 22.2, 60, 2, 100));
         mainInventory.addProduct(new Product(3, "Lame Product", 199.23, 2, 1,7));
+        mainInventory.getAllProducts().get(0).addAssociatedPart(mainInventory.getAllParts().get(0));
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
         Parent root = (Parent) loader.load();

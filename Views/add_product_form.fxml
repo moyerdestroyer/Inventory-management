@@ -73,7 +73,7 @@
                       <TableColumn fx:id="Cost_column" prefWidth="123.0" text="Cost Per Unit" />
                     </columns>
                   </TableView>
-                  <Button fx:id="Add_button" mnemonicParsing="false" text="Add">
+                  <Button fx:id="Add_button" mnemonicParsing="false" text="Add" onAction="#AddButtonAction">
                      <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </VBox.margin>

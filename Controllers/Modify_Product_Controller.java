@@ -2,6 +2,9 @@ package Controllers;
 
 import Model.Inventory;
 import Model.Part;
+import Model.Product;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -13,17 +16,57 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+
+import javax.naming.Name;
 import java.io.IOException;
+import java.util.Optional;
 
 public class Modify_Product_Controller {
     Inventory inv;
     int selectedRow;
+    ObservableList<Part> associatedParts;
+
     public void add_data(Inventory inv, int selectedIndex) {
         this.inv = inv;
         this.selectedRow = selectedIndex;
+        associatedParts = inv.getAllProducts().get(selectedRow).getAssociatedParts();
 
+        ID_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
+        Name_column.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
+        Inventory_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
+        cost_column.setCellValueFactory(new PropertyValueFactory<Part, Double>("price"));
+        //Make a part filter list, and add a listener to search
+        FilteredList<Part> partFilteredData = new FilteredList<>(inv.getAllParts(), p -> true);
+        Search_text.textProperty().addListener((observable, oldValue, newValue) -> {
+            partFilteredData.setPredicate(Part -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                if (Part.getName().contains(newValue)) {
+                    return true;
+                } else if (String.valueOf(Part.getId()).contains(newValue)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<Part> partSortedList = new SortedList<>(partFilteredData);
+        partSortedList.comparatorProperty().bind(Part_table.comparatorProperty());
+        Part_table.setItems(partSortedList);
+        Part_table.getSelectionModel().selectFirst();
 
-
+        Id_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
+        Name_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
+        Inventory_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
+        Cost_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, Double>("price"));
+        Part_table_bottom.setItems(associatedParts);
+        //Fill in product info
+        Id_text.setText(String.valueOf(inv.getAllProducts().get(selectedRow).getId()));
+        Name_text.setText(inv.getAllProducts().get(selectedRow).getName());
+        Inv_text.setText(String.valueOf(inv.getAllProducts().get(selectedRow).getStock()));
+        Price_text.setText(String.valueOf(inv.getAllProducts().get(selectedRow).getPrice()));
+        Max_text.setText(String.valueOf(inv.getAllProducts().get(selectedRow).getMax()));
+        Min_text.setText(String.valueOf(inv.getAllProducts().get(selectedRow).getMin()));
     }
 
     @FXML
@@ -48,31 +91,37 @@ public class Modify_Product_Controller {
     private TextField Search_text;
 
     @FXML
-    private TableColumn<?, ?> ID_column;
+    private TableView<Part> Part_table;
 
     @FXML
-    private TableColumn<?, ?> Name_column;
+    private TableColumn<Part, Integer> ID_column;
 
     @FXML
-    private TableColumn<?, ?> Inventory_column;
+    private TableColumn<Part, String> Name_column;
 
     @FXML
-    private TableColumn<?, ?> cost_column;
+    private TableColumn<Part, Integer> Inventory_column;
+
+    @FXML
+    private TableColumn<Part, Double> cost_column;
 
     @FXML
     private Button Add_button;
 
     @FXML
-    private TableColumn<?, ?> Id_column_bottom;
+    private TableView<Part> Part_table_bottom;
 
     @FXML
-    private TableColumn<?, ?> Name_column_bottom;
+    private TableColumn<Part, Integer> Id_column_bottom;
 
     @FXML
-    private TableColumn<?, ?> Inventory_column_bottom;
+    private TableColumn<Part, String> Name_column_bottom;
 
     @FXML
-    private TableColumn<?, ?> Cost_column_bottom;
+    private TableColumn<Part, Integer> Inventory_column_bottom;
+
+    @FXML
+    private TableColumn<Part, Double> Cost_column_bottom;
 
     @FXML
     private Button Remove_associated_button;
@@ -85,25 +134,119 @@ public class Modify_Product_Controller {
 
     @FXML
     void AddButtonAction(ActionEvent event) {
-
+        int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
+        try {
+            associatedParts.add(inv.getAllParts().get(selectedRow));
+        } catch (Exception e) {
+            associatedParts = FXCollections.observableArrayList(inv.getAllParts().get(selectedRow));
+        }
+        Part_table_bottom.setItems(associatedParts);
     }
 
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
-        Parent addMainParent = FXMLLoader.load(getClass().getResource("/Views/main_form.fxml"));
-        Scene addMainScene = new Scene(addMainParent);
-        Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
-        window.setScene(addMainScene);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
+        Stage mainStage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        Scene mainScene = new Scene((Parent) loader.load());
+        Main_form_controller controller = loader.getController();
+        controller.add_data(inv);
+        mainStage.setScene(mainScene);
     }
 
     @FXML
     void RemovePartButtonAction(ActionEvent event) {
-
+        int selectedRow = Part_table_bottom.getSelectionModel().getSelectedIndex();
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+        a.setTitle("Remove Part Association");
+        a.setContentText("Are you sure you want to remove: " + associatedParts.get(selectedRow).getName());
+        Optional<ButtonType> result = a.showAndWait();
+        if (result.get() == ButtonType.OK)  {
+            boolean delete = associatedParts.remove(associatedParts.get(selectedRow));
+            if (delete) {
+                System.out.println("Associated Part Removed");
+            }
+        } else if (result.get() == ButtonType.CANCEL) {
+            System.out.println("Delete Cancelled");
+        }
     }
 
     @FXML
-    void SaveButtonAction(ActionEvent event) {
-
+    void SaveButtonAction(ActionEvent event) throws IOException {
+        if (verify_data()) {
+            Product newProduct = new Product(Integer.parseInt(Id_text.getText()), Name_text.getText(), Double.parseDouble(Price_text.getText()), Integer.parseInt(Inv_text.getText()), Integer.parseInt(Min_text.getText()), Integer.parseInt(Max_text.getText()));
+            inv.updateProduct(selectedRow, newProduct);
+            //for loop to add all products in associated parts to the new Product
+            if (associatedParts != null) {
+                for (int i = 0; i < associatedParts.size(); i++) {
+                    inv.getAllProducts().get(selectedRow).addAssociatedPart(associatedParts.get(i));
+                }
+            }
+            CancelButtonAction(event);
+        }
     }
 
+    boolean verify_data() {
+        //Temp storage of data
+        String name;
+        double price;
+        int stock;
+        int min;
+        int max;
+
+        //Try the name
+        try {
+            name = Name_text.getText();
+        } catch (Exception e){
+            errorMessage("Please enter a real name");
+            return false;
+        }
+        //Store the price
+        try {
+            price = Double.parseDouble(Price_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please enter a valid price");
+            return false;
+        }
+        //Store the stock
+        try {
+            stock = Integer.parseInt(Inv_text.getText());
+        } catch (Exception e) {
+            errorMessage("Please enter a valid inventory count");
+            return false;
+        }
+        //Store the min
+        try {
+            min = Integer.parseInt(Min_text.getText());
+        } catch (Exception e) {
+            errorMessage("Enter a valid minimum value");
+            return false;
+        }
+        //Store the max
+        try {
+            max = Integer.parseInt(Max_text.getText());
+        } catch (Exception e) {
+            errorMessage("Enter a valid Maximum value");
+            return false;
+        }
+
+        //Check if all ints are positive
+        if (stock < 0 | min < 0 | max < 0) {
+            errorMessage("Please enter positive values for the stock, min and max");
+            return false;
+        }
+        if (min <= stock && stock <= max) {
+            return true;
+        } else {
+            errorMessage("Min, Max, and Stock values are impossible");
+            return false;
+        }
+    }
+
+    void errorMessage(String message) {
+        //Display error messages in Console and with an Alert
+        System.out.println(message);
+        Alert a = new Alert(Alert.AlertType.WARNING);
+        a.setContentText(message);
+        a.show();
+    }
 }
