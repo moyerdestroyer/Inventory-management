@@ -152,7 +152,7 @@ public class Modify_Product_Controller {
 
     /**
      * @param event Cancels modification attempt, and returns to the main screen, passing the inventory back
-     * @throws IOException
+     * @throws IOException filepath exception
      */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
@@ -187,7 +187,7 @@ public class Modify_Product_Controller {
     /**
      * @param event Upon clicking save, calls verifyData(), then attempts to save the modified product into the inventory
      *              CancelButtonAction() is then called to return to the main screen
-     * @throws IOException
+     * @throws IOException filepath exception
      */
     @FXML
     void SaveButtonAction(ActionEvent event) throws IOException {

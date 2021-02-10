@@ -127,7 +127,7 @@ public class Add_Product_Controller {
 
     /**
      * @param event Cancel button sends inventory to main screen controller and loads it up
-     * @throws IOException
+     * @throws IOException filepath exception
      */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {

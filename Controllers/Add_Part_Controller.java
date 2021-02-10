@@ -84,7 +84,7 @@ public class Add_Part_Controller {
     /**
      * @param event When the save button is selected, this function creates a unique ID, adds the new part, then adds the part to the inventory
      *              The Cancel button action is then manually triggered to go back to the main screen
-     * @throws IOException
+     * @throws IOException filepath exception
      */
     @FXML
     void SaveButtonAction(ActionEvent event) throws IOException {

@@ -86,7 +86,7 @@ public class Modify_Part_Controller {
 
     /**
      * @param event Calls verifyData(), then attempts to save the modified part back into the inventory
-     * @throws IOException
+     * @throws IOException due to fxml path
      */
     @FXML
     void SaveButtonAction (ActionEvent event) throws IOException {
@@ -106,7 +106,7 @@ public class Modify_Part_Controller {
 
     /**
      * @param event Passes the inventory to the main screen loader, then changes scenes
-     * @throws IOException
+     * @throws IOException due to fxml path
      */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {

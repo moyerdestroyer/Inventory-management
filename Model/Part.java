@@ -1,7 +1,6 @@
 package Model;
 
 /**
- *
  * @author Ryan Moyer
  */
 
