@@ -16,6 +16,10 @@ import java.util.List;
 public class Add_Part_Controller {
     Inventory inv;
 
+    /**
+     * @param inv accepts inventory and sets the inhouse radio button to true by default
+     *            This function is only called during loading
+     */
     public void add_data(Inventory inv){
         this.inv = inv;
         //have In-house selected by default
@@ -61,16 +65,27 @@ public class Add_Part_Controller {
     @FXML
     private Button CancelButton;
 
+    /**
+     * @param event Will switch the text label to Machine label when the user selects the inhouse radio button
+     */
     @FXML
     void InhouseAction(ActionEvent event) {
         MachineLabel.setText("Machine Id:");
     }
 
+    /**
+     * @param event Will switch the text label to company name when the user selects the outsourced radio button
+     */
     @FXML
     void OutsourcedAction(ActionEvent event) {
         MachineLabel.setText("Company Name:");
     }
 
+    /**
+     * @param event When the save button is selected, this function creates a unique ID, adds the new part, then adds the part to the inventory
+     *              The Cancel button action is then manually triggered to go back to the main screen
+     * @throws IOException
+     */
     @FXML
     void SaveButtonAction(ActionEvent event) throws IOException {
         int numberOfParts = inv.getAllParts().size();
@@ -99,9 +114,12 @@ public class Add_Part_Controller {
         }
     }
 
+    /**
+     * @param event When Cancel button is clicked, go to main screen, passing the inventory to the controller
+     * @throws IOException due to /Views/main_form.fxml
+     */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
-        //Pass the Inventory, and go to main screen
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
         Stage addPartStage = (Stage)((Node) event.getSource()).getScene().getWindow();
         Scene mainScene = new Scene((Parent) loader.load());
@@ -110,6 +128,11 @@ public class Add_Part_Controller {
         addPartStage.setScene(mainScene);
     }
 
+    /**
+     * Data verification method
+     * Tries to store all data into variables, if unable to, trigger errorMessage()
+     * @return true (if passes all verification)
+     */
     boolean verifyData() {
         //Temp storage of data
         String name;
@@ -155,7 +178,15 @@ public class Add_Part_Controller {
             errorMessage("Enter a valid Maximum value");
             return false;
         }
-
+        //Check if Name is empty
+        if (name.isEmpty()) {
+            errorMessage("Please enter name");
+            return false;
+        }
+        //Check if price is positive
+        if (price <= 0) {
+            errorMessage("Please enter a valid price range");
+        }
         //check if in-house or outsourced, then store the data
         if (inHouseRadio.isSelected()) {
             try {
@@ -173,7 +204,6 @@ public class Add_Part_Controller {
                 return false;
             }
         }
-        //Check if all ints are positive
         if (stock < 0 | min < 0 | max < 0) {
             errorMessage("Please enter positive values for the stock, min and max");
             return false;
@@ -185,8 +215,12 @@ public class Add_Part_Controller {
             return false;
         }
     }
+
+    /**
+     * @param error requires a string describing the error to alert the user to
+     */
     void errorMessage(String error) {
-        //Display error messages in Console and with an Alert
+
         System.out.println(error);
         Alert a = new Alert(Alert.AlertType.WARNING);
         a.setContentText(error);

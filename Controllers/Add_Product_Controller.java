@@ -23,10 +23,13 @@ import java.util.Optional;
 public class Add_Product_Controller {
     Inventory inv;
     ObservableList<Part> associatedParts;
+
+    /**
+     * @param inv Stores inventory, and fills out parts inventory table
+     */
     public void add_data(Inventory inv) {
         this.inv = inv;
 
-        //Fill out top table
         Id_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
         Name_column.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
         Inventory_column.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
@@ -50,7 +53,7 @@ public class Add_Product_Controller {
         partSortedList.comparatorProperty().bind(Part_table.comparatorProperty());
         Part_table.setItems(partSortedList);
         Part_table.getSelectionModel().selectFirst();
-
+        //Set Associated parts table up
         Id_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, Integer>("id"));
         Name_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, String>("name"));
         Inventory_column_bottom.setCellValueFactory(new PropertyValueFactory<Part, Integer>("stock"));
@@ -58,7 +61,6 @@ public class Add_Product_Controller {
         Part_table_bottom.setItems(associatedParts);
 
     }
-
 
     @FXML
     private TextField Id_text;
@@ -123,6 +125,10 @@ public class Add_Product_Controller {
     @FXML
     private Button Cancel_button;
 
+    /**
+     * @param event Cancel button sends inventory to main screen controller and loads it up
+     * @throws IOException
+     */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
@@ -133,6 +139,9 @@ public class Add_Product_Controller {
         addPartStage.setScene(mainScene);
     }
 
+    /**
+     * @param event Remove button deletes the selected part from the associated parts observable list
+     */
     @FXML
     void RemoveButtonAction(ActionEvent event) {
         int selectedRow = Part_table_bottom.getSelectionModel().getSelectedIndex();
@@ -151,6 +160,9 @@ public class Add_Product_Controller {
 
     }
 
+    /**
+     * @param event Adds a part to the bottom table, and on the associated part list
+     */
     @FXML
     void AddButtonAction(ActionEvent event) {
         int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
@@ -162,26 +174,39 @@ public class Add_Product_Controller {
         Part_table_bottom.setItems(associatedParts);
     }
 
+    /**
+     * @param event calls verifyData(), then saves the new product into the inventory.
+     *              Associated part list is then added via addAssociatedPart()
+     * @throws IOException
+     * <p>
+     *     The save button function was difficult to work through on two fronts. First, generating a unique ID. At first, making an Id based on the previous ID seemed to work. But, if a user deleted an item, and resumed making products, there was potential to generate identical IDs.
+     *     This was solved by first (#1.1) making an arraylist, and filling it with known IDs. While the arraylist contains the uniqueId (#1.2), id++ and see if that one is contained.
+     * </p>
+     * <p>
+     *     The second issue was assigning the associated parts to the newly created product. First(#2.1), the data is verified, then a new product created and added to the inventory list.
+     *     Once created and added, I wanted to call addAssociatedPart(), but did not know the index of the part. Thankfully, I did have the ID, so a search was performed for the newly created product, returning the index of the product just created (#2.2).
+     *     With the index of the Product, it was still necessary to add the associated parts. This is done at (#2.3), where we quickly check if the partlist is empty, then go through the list, calling addAssociatedPart() for every item in the list.
+     * </p>
+     */
     @FXML
     void SaveButtonAction(ActionEvent event) throws IOException {
         int numberOfParts = inv.getAllProducts().size();
-        //Find what ID to assign, Make an integer list of all known IDs, then assign one to idToAssign
+        //#1.1
         List<Integer> list = new ArrayList<>();
         int idToAssign = 1;
-
-        //Populate int list
         for (int i = 0; i < numberOfParts; i++) {
             list.add(inv.getAllProducts().get(i).getId());
         }
-        //Go through the numbers, and see if the Integer List contains that number
+        //#1.2
         while (list.contains(idToAssign)) {
             idToAssign++;
         }
-        //Verify Data, then add Product, and assign the parts.
+        //#2.1
         if (verify_data()) {
             inv.addProduct(new Product(idToAssign, Name_text.getText(), Double.parseDouble(Price_text.getText()), Integer.parseInt(Inv_text.getText()), Integer.parseInt(Min_text.getText()), Integer.parseInt(Max_text.getText())));
+            //#2.2
             int productIndex = inv.getAllProducts().indexOf(inv.lookupProduct(idToAssign));
-            //for loop to add all products in associated parts to the new Product
+            //#2.3
             if (associatedParts != null) {
                 for (int i = 0; i < associatedParts.size(); i++) {
                     inv.getAllProducts().get(productIndex).addAssociatedPart(associatedParts.get(i));
@@ -192,6 +217,9 @@ public class Add_Product_Controller {
         }
     }
 
+    /**
+     * @return returns true if all data in forms is possible to create a product with
+     */
     boolean verify_data() {
         //Temp storage of data
         String name;
@@ -236,6 +264,17 @@ public class Add_Product_Controller {
             return false;
         }
 
+        //Check if Name is empty
+        if (name.isEmpty()) {
+            errorMessage("Please enter name");
+            return false;
+        }
+
+        //Check if price is positive
+        if (price <= 0) {
+            errorMessage("Please enter a valid price range");
+        }
+
         //Check if all ints are positive
         if (stock < 0 | min < 0 | max < 0) {
             errorMessage("Please enter positive values for the stock, min and max");
@@ -249,6 +288,9 @@ public class Add_Product_Controller {
         }
     }
 
+    /**
+     * @param message Shows string message as an alert that the user has done something incorrectly
+     */
     void errorMessage(String message) {
         //Display error messages in Console and with an Alert
         System.out.println(message);

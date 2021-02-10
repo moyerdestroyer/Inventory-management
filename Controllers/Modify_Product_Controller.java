@@ -26,6 +26,10 @@ public class Modify_Product_Controller {
     int selectedRow;
     ObservableList<Part> associatedParts;
 
+    /**
+     * @param inv Called during loading, gets inventory variable
+     * @param selectedIndex index of currently selected product the user wishes to modify
+     */
     public void add_data(Inventory inv, int selectedIndex) {
         this.inv = inv;
         this.selectedRow = selectedIndex;
@@ -132,6 +136,9 @@ public class Modify_Product_Controller {
     @FXML
     private Button Cancel_button;
 
+    /**
+     * @param event Attempts to add selected part to the associated parts list/table
+     */
     @FXML
     void AddButtonAction(ActionEvent event) {
         int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
@@ -143,6 +150,10 @@ public class Modify_Product_Controller {
         Part_table_bottom.setItems(associatedParts);
     }
 
+    /**
+     * @param event Cancels modification attempt, and returns to the main screen, passing the inventory back
+     * @throws IOException
+     */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
@@ -153,6 +164,9 @@ public class Modify_Product_Controller {
         mainStage.setScene(mainScene);
     }
 
+    /**
+     * @param event Attempts to remove the selected part from associated part table,
+     */
     @FXML
     void RemovePartButtonAction(ActionEvent event) {
         int selectedRow = Part_table_bottom.getSelectionModel().getSelectedIndex();
@@ -170,6 +184,11 @@ public class Modify_Product_Controller {
         }
     }
 
+    /**
+     * @param event Upon clicking save, calls verifyData(), then attempts to save the modified product into the inventory
+     *              CancelButtonAction() is then called to return to the main screen
+     * @throws IOException
+     */
     @FXML
     void SaveButtonAction(ActionEvent event) throws IOException {
         if (verify_data()) {
@@ -185,6 +204,9 @@ public class Modify_Product_Controller {
         }
     }
 
+    /**
+     * @return returns true if all data in forms is passable, also min, max, stock verification
+     */
     boolean verify_data() {
         //Temp storage of data
         String name;
@@ -228,6 +250,17 @@ public class Modify_Product_Controller {
             errorMessage("Enter a valid Maximum value");
             return false;
         }
+        //Check if Name is empty
+        if (name.isEmpty()) {
+            errorMessage("Please enter name");
+            return false;
+        }
+
+        //Check if price is positive
+        if (price <= 0) {
+            errorMessage("Please enter a valid price range");
+        }
+
 
         //Check if all ints are positive
         if (stock < 0 | min < 0 | max < 0) {
@@ -242,6 +275,9 @@ public class Modify_Product_Controller {
         }
     }
 
+    /**
+     * @param message Displays an error alert with the passed string variable as the message
+     */
     void errorMessage(String message) {
         //Display error messages in Console and with an Alert
         System.out.println(message);

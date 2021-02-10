@@ -22,9 +22,13 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 
-public class Main_form_controller implements Initializable {
+public class Main_form_controller {
     Inventory inv;
 
+    /**
+     * @param inv function called during loading to ensure the inventory is passed into the form
+     *            The part and product table is then setup, with a search functionality
+     */
     public void add_data(Inventory inv) {
         this.inv = inv;
 
@@ -135,11 +139,18 @@ public class Main_form_controller implements Initializable {
     @FXML
     private Button Exit;
 
+    /**
+     * @param event Upon clicking the exit button, the program is closed, no further saves are performed
+     */
     @FXML
     void ExitAction(ActionEvent event) {
         Platform.exit();
     }
 
+    /**
+     * @param event Loads the add part form, passing the inventory variable into the called controller
+     * @throws IOException
+     */
     @FXML
     void PartAddAction(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/add_part_form.fxml"));
@@ -150,6 +161,9 @@ public class Main_form_controller implements Initializable {
         mainStage.setScene(partAddScene);
     }
 
+    /**
+     * @param event Attempts to delete selected part from the part table, showing a confirmation alert to verify
+     */
     @FXML
     void PartDeleteAction(ActionEvent event) {
         int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
@@ -168,6 +182,10 @@ public class Main_form_controller implements Initializable {
 
     }
 
+    /**
+     * @param event Loads the Modify part form, Passing the controller the currently selected part, and the inventory
+     * @throws IOException
+     */
     @FXML
     void PartModifyAction(ActionEvent event) throws IOException {
         int selectedRow = Part_table.getSelectionModel().getSelectedIndex();
@@ -180,6 +198,10 @@ public class Main_form_controller implements Initializable {
         modifyPartStage.setScene(modifyPartScene);
     }
 
+    /**
+     * @param event Loads the Add Product form, passing the controller the inventory in the add_data() function
+     * @throws IOException
+     */
     @FXML
     void ProductAddAction(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/add_product_form.fxml"));
@@ -190,23 +212,37 @@ public class Main_form_controller implements Initializable {
         addProductStage.setScene(addProductScene);
     }
 
+    /**
+     * @param event Attempts to delete the selected product, showing a confirmation alert first
+     */
     @FXML
     void ProductDeleteAction(ActionEvent event) {
         int selectedRow = Product_table.getSelectionModel().getSelectedIndex();
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-        a.setTitle("Delete Product");
-        a.setContentText("Are you sure you want to delete: " + inv.getAllProducts().get(selectedRow).getName());
-        Optional<ButtonType> result = a.showAndWait();
-        if (result.get() == ButtonType.OK)  {
-            boolean delete = inv.deleteProduct(inv.getAllProducts().get(selectedRow));
-            if (delete) {
-                System.out.println("Product Deleted");
+        //Check if product has associated parts
+        if (inv.getAllProducts().get(selectedRow).getAssociatedParts() == null) {
+            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+            a.setTitle("Delete Product");
+            a.setContentText("Are you sure you want to delete: " + inv.getAllProducts().get(selectedRow).getName());
+            Optional<ButtonType> result = a.showAndWait();
+            if (result.get() == ButtonType.OK)  {
+                boolean delete = inv.deleteProduct(inv.getAllProducts().get(selectedRow));
+                if (delete) {
+                    System.out.println("Product Deleted");
+                }
+            } else if (result.get() == ButtonType.CANCEL) {
+                System.out.println("Delete Cancelled");
             }
-        } else if (result.get() == ButtonType.CANCEL) {
-            System.out.println("Delete Cancelled");
+        } else {
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setContentText("Unable to delete product with parts associated");
+            a.show();
         }
     }
 
+    /**
+     * @param event Attempts to load the modify product form, passing the inventory, and currently selected product
+     * @throws IOException
+     */
     @FXML
     void ProductModifyAction(ActionEvent event) throws IOException {
         int selectedRow = Product_table.getSelectionModel().getSelectedIndex();
@@ -217,11 +253,4 @@ public class Main_form_controller implements Initializable {
         controller.add_data(inv, selectedRow);
         modifyProductStage.setScene(modifyProductScene);
     }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Main Screen Initialized");
-    }
-
-
 }

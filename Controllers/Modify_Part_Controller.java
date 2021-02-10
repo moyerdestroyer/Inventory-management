@@ -16,6 +16,10 @@ public class Modify_Part_Controller {
     Inventory inv;
     int selectedRow;
 
+    /**
+     * @param inv Passes the current inventory to this controller
+     * @param row defines the index within the inventory of the current part the user is wanting to modify
+     */
     public void add_data(Inventory inv, int row) {
         this.inv = inv;
         this.selectedRow = row;
@@ -80,6 +84,10 @@ public class Modify_Part_Controller {
     @FXML
     private Button Cancel_button;
 
+    /**
+     * @param event Calls verifyData(), then attempts to save the modified part back into the inventory
+     * @throws IOException
+     */
     @FXML
     void SaveButtonAction (ActionEvent event) throws IOException {
         if (verifyData()) {
@@ -96,6 +104,10 @@ public class Modify_Part_Controller {
         }
     }
 
+    /**
+     * @param event Passes the inventory to the main screen loader, then changes scenes
+     * @throws IOException
+     */
     @FXML
     void CancelButtonAction(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Views/main_form.fxml"));
@@ -106,17 +118,26 @@ public class Modify_Part_Controller {
         modifyPartStage.setScene(mainScene);
     }
 
+    /**
+     * @param event Changes the label text to "Company name" when user selects the outsourced radio button
+     */
     @FXML
     void outsourcedAction (ActionEvent event) {
         Machine_label.setText("Company Name:");
     }
 
+    /**
+     * @param event Changes text to "Machine ID" when user selects the inhouse radio button
+     */
     @FXML
     void inhouseAction (ActionEvent event) {
         Machine_label.setText("Machine Id:");
     }
 
-    //Verify Data function
+
+    /**
+     * @return Boolean function that return true if all Entered data is correct/useable
+     */
     boolean verifyData() {
         //Temp storage of data
         String name;
@@ -162,7 +183,15 @@ public class Modify_Part_Controller {
             errorMessage("Enter a valid Maximum value");
             return false;
         }
-
+        //Check if Name is empty
+        if (name.isEmpty()) {
+            errorMessage("Please enter name");
+            return false;
+        }
+        //Check if price is positive
+        if (price <= 0) {
+            errorMessage("Please enter a valid price range");
+        }
         //check if in-house or outsourced, then store the data
         if (Inhouse_radio.isSelected()) {
         try {
@@ -193,6 +222,9 @@ public class Modify_Part_Controller {
         }
     }
 
+    /**
+     * @param error Displays error alert with the helpful string parameter
+     */
     void errorMessage(String error) {
         //Display error messages in Console and with an Alert
         System.out.println(error);
