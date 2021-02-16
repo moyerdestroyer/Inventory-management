@@ -22,6 +22,14 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 
+/**
+ * <b>Features for the future</b>
+ * <p>
+ *     A feature that could become extremely useful, especially during management of larger inventories, would be the ability to identify parts by machine ID, or manufacturer.
+ *     Adding a company name, viewable from a drop-down menu, can create make it easier for users to identify  parts from the same location.
+ *     Sometimes it is also useful to see how much of your inventory is produced by a particular machine. Using the MachineID to identify faulty inventory can be useful if there is an issue with a machine.
+ * </p>
+ */
 public class Main_form_controller {
     Inventory inv;
 
@@ -193,7 +201,6 @@ public class Main_form_controller {
         Stage modifyPartStage = (Stage)((Node) event.getSource()).getScene().getWindow();
         Scene modifyPartScene = new Scene((Parent) loader.load());
         Modify_Part_Controller controller = loader.getController();
-
         controller.add_data(inv, selectedRow);
         modifyPartStage.setScene(modifyPartScene);
     }

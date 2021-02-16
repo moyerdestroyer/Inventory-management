@@ -49,7 +49,6 @@ public class Inventory {
      * @return returns part identified by name
      */
     public Part lookupPart(String partName) {
-        //What is this used for
         return allParts.get(0);
     }
 
@@ -73,7 +72,6 @@ public class Inventory {
      * @return returns the entire product of lookup result
      */
     public Product lookupProduct(String productName) {
-        //Idk what this is for
         return allProducts.get(0);
     }
 

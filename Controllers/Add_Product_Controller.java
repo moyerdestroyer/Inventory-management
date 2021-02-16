@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <b>Paragraph Describing Logical Error</b>
+ * <p>skip to section "SaveButtonAction"</p>
+ */
 public class Add_Product_Controller {
     Inventory inv;
     ObservableList<Part> associatedParts;
